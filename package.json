@@ -1,14 +1,7 @@
 {
-  "name": "@diandiandidi/cli",
+  "name": "root",
   "version": "1.0.0",
   "description": "我的第一个cli工具",
-  "main": "index.js",
-  "bin": {
-    "my-cli": "bin/index.js"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
   "license": "ISC",
   "repository": {
@@ -24,6 +17,7 @@
     "cz-emoji-conventional": "^1.0.1",
     "git-cz": "^4.8.0",
     "husky": "^7.0.0",
+    "lerna": "^4.0.0",
     "standard-version": "^9.3.2"
   }
 }

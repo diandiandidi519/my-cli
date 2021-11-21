@@ -1,2 +1,8 @@
 node_modules
 .DS_Store
+
+packages/**/node_modules
+packages/**/package-lock.json
+
+*.log
+package-lock.json
