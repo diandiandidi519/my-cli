@@ -1,7 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = core;
 
 function core() {
-    // TODO
+  // TODO
+  console.log("测试lerna发布");
 }
