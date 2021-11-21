@@ -1,7 +1,6 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "1.0.1",
-  "workspaces": true
+  "workspaces": true,
+  "private": true
 }
