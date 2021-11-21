@@ -7,7 +7,7 @@
   "license": "ISC",
   "main": "lib/index.js",
   "bin": {
-    "my-cli": "./lib/index.js"
+    "diandiandidi-cli": "./bin/index.js"
   },
   "directories": {
     "lib": "lib",
@@ -16,6 +16,11 @@
   "files": [
     "lib"
   ],
+  "dependencies": {
+    "@diandiandidi-cli/utils": "file:../../utils/utils/",
+    "import-local": "^3.0.3",
+    "npmlog": "^6.0.0"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
