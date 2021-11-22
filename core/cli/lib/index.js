@@ -9,10 +9,14 @@ const pkg = require("../package.json");
 const log = require("@diandiandidi-cli/log");
 const constant = require("./const");
 
+let args = [];
+
+// 获取版本信息
 function checkPkgVersion() {
   log.notice("cli", pkg.version);
 }
 
+// 检查node版本号
 function checkNodeVersion() {
   // 获取当前node版本号
   const currentVersion = process.version;
@@ -23,16 +27,35 @@ function checkNodeVersion() {
   }
 }
 
+// root降级
 function checkRoot() {
   const rootCheck = require("root-check");
   rootCheck();
 }
 
+// 检查用户主目录
 function checkUserHome() {
   console.log(userHome);
   if (!userHome || !fse.existsSync(userHome)) {
     throw new Error(colors.red("当前登录用户主目录不存在！"));
   }
+}
+
+// 解析入参参数
+function checkInputArgs() {
+  const parseArgs = require("minimist");
+  args = parseArgs(process.argv.slice(2));
+  checkArgs();
+}
+
+function checkArgs() {
+  console.log(args);
+  if (args.debug) {
+    process.env.LOG_LEVEL = "verbose";
+  } else {
+    process.env.LOG_LEVEL = "info";
+  }
+  log.level = process.env.LOG_LEVEL;
 }
 
 function core() {
@@ -41,6 +64,8 @@ function core() {
     checkNodeVersion();
     checkRoot();
     checkUserHome();
+    checkInputArgs();
+    log.verbose("debug", "test debug");
   } catch (e) {
     log.error(e.message);
   }
