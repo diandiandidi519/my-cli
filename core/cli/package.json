@@ -17,10 +17,12 @@
     "lib"
   ],
   "dependencies": {
-    "@diandiandidi-cli/utils": "file:../../utils/utils/",
     "@diandiandidi-cli/log": "file:../../utils/log/",
+    "@diandiandidi-cli/utils": "file:../../utils/utils/",
+    "colors": "^1.4.0",
     "import-local": "^3.0.3",
-    "npmlog": "^6.0.0"
+    "npmlog": "^6.0.0",
+    "semver": "^7.3.5"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
