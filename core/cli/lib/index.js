@@ -2,6 +2,8 @@ module.exports = core;
 
 const semver = require("semver");
 const colors = require("colors/safe");
+const userHome = require("user-home");
+const fse = require("fs-extra");
 
 const pkg = require("../package.json");
 const log = require("@diandiandidi-cli/log");
@@ -26,11 +28,19 @@ function checkRoot() {
   rootCheck();
 }
 
+function checkUserHome() {
+  console.log(userHome);
+  if (!userHome || !fse.existsSync(userHome)) {
+    throw new Error(colors.red("当前登录用户主目录不存在！"));
+  }
+}
+
 function core() {
   try {
     checkPkgVersion();
     checkNodeVersion();
     checkRoot();
+    checkUserHome();
   } catch (e) {
     log.error(e.message);
   }
