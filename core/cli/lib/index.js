@@ -1,5 +1,7 @@
 module.exports = core;
 
+const path = require("path");
+
 const semver = require("semver");
 const colors = require("colors/safe");
 const userHome = require("user-home");
@@ -9,7 +11,7 @@ const pkg = require("../package.json");
 const log = require("@diandiandidi-cli/log");
 const constant = require("./const");
 
-let args = [];
+let args, config;
 
 // 获取版本信息
 function checkPkgVersion() {
@@ -57,6 +59,27 @@ function checkArgs() {
   }
   log.level = process.env.LOG_LEVEL;
 }
+function checkEnv() {
+  const dotenv = require("dotenv");
+  const dotenvPath = path.resolve(userHome, ".env");
+  if (fse.existsSync(dotenvPath)) {
+    config = dotenv.config({ path: dotenvPath });
+  }
+  createDefaultConfig();
+  log.verbose("环境变量", process.env.CLI_HOME_PATH);
+}
+
+function createDefaultConfig() {
+  const cliConfig = {
+    home: userHome,
+  };
+  if (process.env.CLI_HOME) {
+    cliConfig["cliHome"] = path.join(userHome, process.env.CLI_HOME);
+  } else {
+    cliConfig["cliHome"] = path.join(userHome, constant.DEFAULT_CLI_HOME);
+  }
+  process.env.CLI_HOME_PATH = cliConfig["cliHome"];
+}
 
 function core() {
   try {
@@ -65,7 +88,7 @@ function core() {
     checkRoot();
     checkUserHome();
     checkInputArgs();
-    log.verbose("debug", "test debug");
+    checkEnv();
   } catch (e) {
     log.error(e.message);
   }
