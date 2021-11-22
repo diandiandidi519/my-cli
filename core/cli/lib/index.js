@@ -81,7 +81,28 @@ function createDefaultConfig() {
   process.env.CLI_HOME_PATH = cliConfig["cliHome"];
 }
 
-function core() {
+async function checkGlobalUpdate() {
+  // 获取当前版本号和模块名
+  const currentVersion = pkg.version;
+  const npmName = pkg.name;
+
+  // 调用npm api，获取所有版本名
+  // 提取所有的版本号，比对大于当前版本的
+
+  const { getNpmSemverVersions } = require("@diandiandidi-cli/get-npm-info");
+  const lastVersion = await getNpmSemverVersions(npmName, currentVersion);
+  // 获取最新的版本号，提示用户更新
+  if (lastVersion && semver.gt(lastVersion, currentVersion)) {
+    log.warn(
+      "更新提示",
+      colors.yellow(
+        `请手动更新${npmName}，当前版本：${currentVersion}，最新版本：${lastVersion}`
+      )
+    );
+  }
+}
+
+async function core() {
   try {
     checkPkgVersion();
     checkNodeVersion();
@@ -89,6 +110,7 @@ function core() {
     checkUserHome();
     checkInputArgs();
     checkEnv();
+    checkGlobalUpdate();
   } catch (e) {
     log.error(e.message);
   }

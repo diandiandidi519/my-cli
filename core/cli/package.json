@@ -19,6 +19,7 @@
   "dependencies": {
     "@diandiandidi-cli/log": "file:../../utils/log/",
     "@diandiandidi-cli/utils": "file:../../utils/utils/",
+    "@diandiandidi-cli/get-npm-info": "file:../../utils/get-npm-info/",
     "colors": "^1.4.0",
     "dotenv": "^10.0.0",
     "import-local": "^3.0.3",
