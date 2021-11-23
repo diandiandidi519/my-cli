@@ -1,6 +1,7 @@
 module.exports = core;
 
 const path = require("path");
+const { program } = require("commander");
 
 const semver = require("semver");
 const colors = require("colors/safe");
@@ -9,6 +10,7 @@ const fse = require("fs-extra");
 
 const pkg = require("../package.json");
 const log = require("@diandiandidi-cli/log");
+const init = require("@diandiandidi-cli/init");
 const constant = require("./const");
 
 let args, config;
@@ -102,15 +104,54 @@ async function checkGlobalUpdate() {
   }
 }
 
+function registerCommand() {
+  program
+    .name(Object.keys(pkg.bin)[0])
+    .version(pkg.version)
+    .usage("<command> [options]")
+    .option("-d, --debug", "是否开启debug模式", false);
+
+  const options = program.opts();
+  console.log(options);
+
+  program
+    .command("init [projectName]")
+    .description("请输入项目名称")
+    .option("-f --force", "是否强制初始化项目")
+    .action(init);
+
+  // 开启debug模式
+  program.on("option:debug", function() {
+    if (options.debug) {
+      process.env.LOG_LEVEL = "verbose";
+    } else {
+      process.env.LOG_LEVEL = "info";
+    }
+    log.level = process.env.LOG_LEVEL;
+  });
+
+  /**该功能被废弃 */
+  // program.on("command:*", function(obj) {
+  //   console.log(obj);
+  // });
+
+  program.parse(process.argv);
+  //解析输入的命令，没有指定的命令，输出帮助文档
+  if (program.args && program.args.length < 1) {
+    program.outputHelp();
+  }
+}
+
 async function core() {
   try {
     checkPkgVersion();
     checkNodeVersion();
     checkRoot();
     checkUserHome();
-    checkInputArgs();
+    // checkInputArgs();
     checkEnv();
     checkGlobalUpdate();
+    registerCommand();
   } catch (e) {
     log.error(e.message);
   }

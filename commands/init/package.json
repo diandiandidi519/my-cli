@@ -1,0 +1,34 @@
+{
+  "name": "@diandiandidi-cli/init",
+  "version": "1.0.0",
+  "private": true,
+  "description": "init command",
+  "keywords": [
+    "init",
+    "command"
+  ],
+  "author": "diandiandidi519 <978267807@qq.com>",
+  "homepage": "https://github.com/diandiandidi519/my-cli#readme",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diandiandidi519/my-cli.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/diandiandidi519/my-cli/issues"
+  }
+}
