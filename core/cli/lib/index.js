@@ -45,22 +45,6 @@ function checkUserHome() {
   }
 }
 
-// 解析入参参数
-function checkInputArgs() {
-  const parseArgs = require("minimist");
-  args = parseArgs(process.argv.slice(2));
-  checkArgs();
-}
-
-function checkArgs() {
-  console.log(args);
-  if (args.debug) {
-    process.env.LOG_LEVEL = "verbose";
-  } else {
-    process.env.LOG_LEVEL = "info";
-  }
-  log.level = process.env.LOG_LEVEL;
-}
 function checkEnv() {
   const dotenv = require("dotenv");
   const dotenvPath = path.resolve(userHome, ".env");
@@ -109,7 +93,8 @@ function registerCommand() {
     .name(Object.keys(pkg.bin)[0])
     .version(pkg.version)
     .usage("<command> [options]")
-    .option("-d, --debug", "是否开启debug模式", false);
+    .option("-d, --debug", "是否开启debug模式", false)
+    .option("-tp, --targetPath <targetPath>", "targetPath", "");
 
   const options = program.opts();
   console.log(options);
@@ -130,6 +115,11 @@ function registerCommand() {
     log.level = process.env.LOG_LEVEL;
   });
 
+  // 指定targetPath
+  program.on("option:targetPath", function() {
+    process.env.CLI_TARGET_PATH = options.targetPath;
+  });
+
   /**该功能被废弃 */
   // program.on("command:*", function(obj) {
   //   console.log(obj);
@@ -144,13 +134,21 @@ function registerCommand() {
 
 async function core() {
   try {
+    await prepare();
+    registerCommand();
+  } catch (e) {
+    log.error(e.message);
+  }
+}
+
+async function prepare() {
+  try {
     checkPkgVersion();
     checkNodeVersion();
     checkRoot();
     checkUserHome();
-    // checkInputArgs();
     checkEnv();
-    checkGlobalUpdate();
+    await checkGlobalUpdate();
     registerCommand();
   } catch (e) {
     log.error(e.message);

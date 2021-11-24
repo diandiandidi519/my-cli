@@ -1,7 +1,8 @@
 "use strict";
 
-function init(projectName, cmdObj) {
-  console.log("init", projectName, cmdObj);
+function init(name, options, command) {
+  console.log("init", name, options);
+  console.log(command.parent._optionValues);
 }
 
 module.exports = init;
