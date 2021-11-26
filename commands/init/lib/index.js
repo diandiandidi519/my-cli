@@ -1,5 +1,4 @@
 "use strict";
-
 const Command = require("@diandiandidi-cli/command");
 const log = require("@diandiandidi-cli/log");
 class InitCommand extends Command {
@@ -7,7 +6,7 @@ class InitCommand extends Command {
     this.projectName = this._argv[0] || "";
     this.force = this._argv[1].force || false;
     log.verbose("projectName", this.projectName);
-    log.verbose("_force", this.force);
+    log.verbose("force", this.force);
   }
   exec() {}
 }
