@@ -11,13 +11,14 @@ const fse = require("fs-extra");
 const pkg = require("../package.json");
 const log = require("@diandiandidi-cli/log");
 const init = require("@diandiandidi-cli/init");
+const exec = require("@diandiandidi-cli/exec");
 const constant = require("./const");
 
 let args, config;
 
 // 获取版本信息
 function checkPkgVersion() {
-  log.notice("cli", pkg.version);
+  log.info("diandiandidi-cli", pkg.version);
 }
 
 // 检查node版本号
@@ -39,7 +40,7 @@ function checkRoot() {
 
 // 检查用户主目录
 function checkUserHome() {
-  console.log(userHome);
+  log.verbose("userHome", userHome);
   if (!userHome || !fse.existsSync(userHome)) {
     throw new Error(colors.red("当前登录用户主目录不存在！"));
   }
@@ -52,7 +53,6 @@ function checkEnv() {
     config = dotenv.config({ path: dotenvPath });
   }
   createDefaultConfig();
-  log.verbose("环境变量", process.env.CLI_HOME_PATH);
 }
 
 function createDefaultConfig() {
@@ -94,19 +94,18 @@ function registerCommand() {
     .version(pkg.version)
     .usage("<command> [options]")
     .option("-d, --debug", "是否开启debug模式", false)
-    .option("-tp, --targetPath <targetPath>", "targetPath", "");
+    .option("-tp, --targetPath <targetPath>", "项目目录", "");
 
   const options = program.opts();
-  console.log(options);
 
   program
     .command("init [projectName]")
     .description("请输入项目名称")
     .option("-f --force", "是否强制初始化项目")
-    .action(init);
+    .action(exec);
 
   // 开启debug模式
-  program.on("option:debug", function() {
+  program.on("option:debug", function () {
     if (options.debug) {
       process.env.LOG_LEVEL = "verbose";
     } else {
@@ -116,7 +115,7 @@ function registerCommand() {
   });
 
   // 指定targetPath
-  program.on("option:targetPath", function() {
+  program.on("option:targetPath", function () {
     process.env.CLI_TARGET_PATH = options.targetPath;
   });
 
@@ -149,7 +148,6 @@ async function prepare() {
     checkUserHome();
     checkEnv();
     await checkGlobalUpdate();
-    registerCommand();
   } catch (e) {
     log.error(e.message);
   }

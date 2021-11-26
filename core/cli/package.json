@@ -21,6 +21,7 @@
     "@diandiandidi-cli/log": "file:../../utils/log/",
     "@diandiandidi-cli/utils": "file:../../utils/utils/",
     "@diandiandidi-cli/init": "file:../../commands/init/",
+    "@diandiandidi-cli/exec": "file:../exec/",
     "colors": "^1.4.0",
     "commander": "^8.3.0",
     "dotenv": "^10.0.0",
