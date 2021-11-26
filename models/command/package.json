@@ -1,12 +1,8 @@
 {
-  "name": "@diandiandidi-cli/init",
+  "name": "@diandiandidi-cli/command",
   "version": "1.0.0",
   "private": true,
-  "description": "init command",
-  "keywords": [
-    "init",
-    "command"
-  ],
+  "description": "command",
   "author": "diandiandidi519 <978267807@qq.com>",
   "homepage": "https://github.com/diandiandidi519/my-cli#readme",
   "license": "ISC",
@@ -32,7 +28,9 @@
     "url": "https://github.com/diandiandidi519/my-cli/issues"
   },
   "dependencies": {
-    "@diandiandidi-cli/command": "file:../../models/command/",
-    "@diandiandidi-cli/log": "file:../../utils/log/"
+    "colors": "^1.4.0",
+    "semver": "^7.3.5",
+    "@diandiandidi-cli/log": "file:../../utils/log/",
+    "@diandiandidi-cli/utils": "file:../../utils/utils/"
   }
 }
