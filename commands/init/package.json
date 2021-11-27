@@ -37,8 +37,11 @@
     "@diandiandidi-cli/package": "file:../../models/package/",
     "@diandiandidi-cli/request": "file:../../utils/request/",
     "@diandiandidi-cli/utils": "file:../../utils/utils/",
+    "ejs": "^3.1.6",
     "fs-extra": "^10.0.0",
+    "glob": "^7.2.0",
     "inquirer": "^8.2.0",
+    "kebab-case": "^1.0.1",
     "semver": "^7.3.5",
     "user-home": "^3.0.0"
   }

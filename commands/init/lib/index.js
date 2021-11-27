@@ -8,6 +8,9 @@ const fse = require("fs-extra");
 const inquirer = require("inquirer");
 const semver = require("semver");
 const userHome = require("user-home");
+const kebabCase = require("kebab-case");
+const glob = require("glob");
+const ejs = require("ejs");
 
 const ignoreFile = [".git", "package.json", "node_modules"];
 const TYPE_PROJECT = 0;
@@ -125,6 +128,10 @@ class InitCommand extends Command {
       spinner.stop(true);
       log.error(error);
     }
+    const files = await this.ejsRender(process.cwd(), [
+      "node_modules/**",
+      "public/**",
+    ]);
     const { installCommand, startCommand } = this.templateInfo;
     // 安装依赖
     await this.execCommand(installCommand, "安装依赖异常！");
@@ -133,6 +140,42 @@ class InitCommand extends Command {
   }
 
   async installCustomTemplate() {}
+
+  async ejsRender(dir, ignore = "") {
+    const projectInfo = this.projectInfo;
+    return new Promise(function (resolve, reject) {
+      glob(
+        "**",
+        {
+          cwd: process.cwd(),
+          ignore,
+          nodir: true,
+        },
+        (err, files) => {
+          if (err) {
+            reject(err);
+          }
+          return Promise.all(
+            files.map((file) => {
+              const filePath = path.join(dir, file);
+              return new Promise((resolve1, reject1) => {
+                ejs.renderFile(filePath, projectInfo, (err1, result1) => {
+                  if (err1) {
+                    reject1(err1);
+                  } else {
+                    fse.writeFileSync(filePath, result1);
+                    resolve1(result1);
+                  }
+                });
+              });
+            })
+          )
+            .then(resolve)
+            .catch(reject);
+        }
+      );
+    });
+  }
 
   async prepare() {
     // 判断项目模板是否存在
@@ -203,9 +246,12 @@ class InitCommand extends Command {
 
     return this.getProjectInfo();
   }
+
   async getProjectInfo() {
-    // 选择项目或者组件
-    const answers = await inquirer.prompt([
+    const validProjectName = (name) => {
+      return /^[a-zA-Z]+[\w-]*[a-zA-Z]$/.test(name);
+    };
+    let prompt = [
       {
         type: "list",
         message: "请选择初始化类型",
@@ -221,32 +267,6 @@ class InitCommand extends Command {
             value: TYPE_COMPONENT,
           },
         ],
-      },
-      {
-        type: "message",
-        message: "请输入项目的名称",
-        default: "",
-        name: "projectName",
-        when(answers) {
-          return answers.type == TYPE_PROJECT;
-        },
-        validate(v) {
-          const done = this.async();
-
-          // 首字符为英文字符
-          // 尾字符为英文或者数字
-          // 字符仅允许_
-          setTimeout(function () {
-            if (!/^[a-zA-Z]+[\w-]*[a-zA-Z]$/.test(v)) {
-              done("请输入合法的项目名称");
-              return;
-            }
-            done(null, true);
-          }, 0);
-        },
-        filter(v) {
-          return v;
-        },
       },
       {
         type: "input",
@@ -281,8 +301,44 @@ class InitCommand extends Command {
         name: "projectTemplate",
         choices: this.createTemplateChoice(),
       },
-    ]);
+    ];
+
+    if (!this.projectName.length || !validProjectName(this.projectName)) {
+      prompt.splice(1, 0, {
+        type: "message",
+        message: "请输入项目的名称",
+        default: "",
+        name: "projectName",
+        when(answers) {
+          return answers.type == TYPE_PROJECT;
+        },
+        validate(v) {
+          const done = this.async();
+          // 首字符为英文字符
+          // 尾字符为英文或者数字
+          // 字符仅允许_
+          setTimeout(function () {
+            if (!validProjectName(v)) {
+              done("请输入合法的项目名称");
+              return;
+            }
+            done(null, true);
+          }, 0);
+        },
+        filter(v) {
+          return v;
+        },
+      });
+    }
+    // 选择项目或者组件
+    const answers = await inquirer.prompt(prompt);
+    answers.projectName = answers.projectName || this.projectName;
+
     // 获取项目的基本信息
+    if (answers.projectName) {
+      answers.className = kebabCase(answers.projectName).replace(/^-/, "");
+      answers.version = answers.projectVersion;
+    }
 
     return answers;
   }
