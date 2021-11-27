@@ -1,9 +1,9 @@
 "use strict";
 const path = require("path");
 const cp = require("child_process");
-
 const Package = require("@diandiandidi-cli/package");
 const log = require("@diandiandidi-cli/log");
+const { exec: spawn } = require("@diandiandidi-cli/utils");
 
 const SETTINGS = {
   init: "axios" //@diandiandidi-cli/init
@@ -81,14 +81,6 @@ async function exec() {
   } catch (error) {
     log.error(error);
   }
-}
-
-function spawn(command, args, options = {}) {
-  // 兼容windows平台
-  const win32 = process.platform === "win32";
-  const cmd = win32 ? "cmd" : command;
-  const cmdArgs = win32 ? ["/c"].concat(command, args) : args;
-  return cp.spawn(cmd, cmdArgs, options);
 }
 
 module.exports = exec;

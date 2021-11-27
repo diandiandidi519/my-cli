@@ -1,7 +1,7 @@
 "use strict";
 const Command = require("@diandiandidi-cli/command");
 const log = require("@diandiandidi-cli/log");
-const { spinnerStart, sleep } = require("@diandiandidi-cli/utils");
+const { spinnerStart, sleep, execPromise } = require("@diandiandidi-cli/utils");
 const Package = require("@diandiandidi-cli/package");
 const { getProjectTemplate } = require("@diandiandidi-cli/request");
 const fse = require("fs-extra");
@@ -12,6 +12,10 @@ const userHome = require("user-home");
 const ignoreFile = [".git", "package.json", "node_modules"];
 const TYPE_PROJECT = 0;
 const TYPE_COMPONENT = 1;
+const TEMPLATE_TYPE_NORMAL = "normal";
+const TEMPLATE_TYPE_CUSTOM = "custom";
+
+const CMD_WHITE_LIST = ["npm", "cnpm"];
 class InitCommand extends Command {
   init() {
     this.projectName = this._argv[0] || "";
@@ -29,6 +33,7 @@ class InitCommand extends Command {
         // 下载模板
         await this.downloadTemplate();
         // 安装模板
+        await this.installTemplate();
       }
     } catch (error) {
       log.error(error.message);
@@ -42,6 +47,7 @@ class InitCommand extends Command {
     // 将项目模板信息存储到mongodb数据库中
     // 通过egg.js获取mongodb中的数据，并且通过API返回
     const templateInfo = this.template[this.projectInfo.projectTemplate];
+    this.templateInfo = templateInfo;
     const { npmName, version } = templateInfo;
     const targetPath = path.resolve(userHome, ".diandiandidi", "template");
     const storeDir = path.resolve(
@@ -56,6 +62,8 @@ class InitCommand extends Command {
       packageVersion: version,
     });
 
+    this.templateNpm = pkg;
+
     if (await pkg.exists()) {
       const spinner = spinnerStart("正在更新模板");
       try {
@@ -64,23 +72,68 @@ class InitCommand extends Command {
         spinner.stop(true);
         log.success("更新成功");
       } catch (error) {
-        log.error(error);
-      } finally {
         spinner.stop(true);
+        log.error(error);
       }
     } else {
       const spinner = spinnerStart("正在下载模板");
       try {
         await sleep();
         await pkg.install();
+        spinner.stop(true);
         log.success("下载成功");
       } catch (error) {
-        log.error(error);
-      } finally {
         spinner.stop(true);
+        log.error(error);
       }
     }
   }
+  async installTemplate() {
+    log.verbose("templateInfo", this.templateInfo);
+    if (this.templateInfo) {
+      if (!this.templateInfo.type) {
+        this.templateInfo.type = TEMPLATE_TYPE_NORMAL;
+      }
+      if (this.templateInfo.type === TEMPLATE_TYPE_NORMAL) {
+        // 标准安装
+        await this.installNormalTemplate();
+      } else if (this.templateInfo.type === TEMPLATE_TYPE_CUSTOM) {
+        // 自定义安装
+        await this.installCustomTemplate();
+      } else {
+        throw new Error("项目模板信息无法识别");
+      }
+    } else {
+      throw new Error("模板信息不存在");
+    }
+  }
+  async installNormalTemplate() {
+    const templatePath = path.resolve(
+      this.templateNpm.cacheFilePath,
+      "template"
+    );
+    const targetPath = process.cwd();
+    fse.ensureDirSync(templatePath);
+    fse.ensureDirSync(targetPath);
+    let spinner = spinnerStart("正在安装模板");
+    try {
+      // 拷贝模板代码到当前目录
+      fse.copySync(templatePath, targetPath);
+      spinner.stop(true);
+      log.success("模板安装成功");
+    } catch (error) {
+      spinner.stop(true);
+      log.error(error);
+    }
+    const { installCommand, startCommand } = this.templateInfo;
+    // 安装依赖
+    await this.execCommand(installCommand, "安装依赖异常！");
+    // 启动服务
+    await this.execCommand(startCommand, "执行命令异常！");
+  }
+
+  async installCustomTemplate() {}
+
   async prepare() {
     // 判断项目模板是否存在
     const template = await getProjectTemplate();
@@ -232,6 +285,24 @@ class InitCommand extends Command {
     // 获取项目的基本信息
 
     return answers;
+  }
+
+  async execCommand(command, errMsg) {
+    if (command) {
+      const cmdSplit = command.split(" ");
+      const cmd = cmdSplit[0];
+      if (!CMD_WHITE_LIST.includes(cmd)) {
+        throw new Error(`不识别的命令！${command}`);
+      }
+      const args = cmdSplit.slice(1);
+      const installRet = await execPromise(cmd, args, {
+        stdio: "inherit",
+        cwd: process.cwd(),
+      });
+      if (installRet !== 0) {
+        throw new Error(`${errMsg}${command}`);
+      }
+    }
   }
 
   createTemplateChoice() {
