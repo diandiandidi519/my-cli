@@ -52,7 +52,6 @@ class Package {
   // 安装package
   async install() {
     await this.prepare();
-    console.log("packageVersion", this.packageVersion);
     return npmInstall({
       root: this.targetPath,
       storeDir: this.storeDir,

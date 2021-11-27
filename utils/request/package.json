@@ -1,11 +1,11 @@
 {
-  "name": "@diandiandidi-cli/init",
+  "name": "@diandiandidi-cli/request",
   "version": "1.0.0",
   "private": true,
-  "description": "init command",
+  "description": "request axios",
   "keywords": [
-    "init",
-    "command"
+    "axios",
+    "request"
   ],
   "author": "diandiandidi519 <978267807@qq.com>",
   "homepage": "https://github.com/diandiandidi519/my-cli#readme",
@@ -32,14 +32,6 @@
     "url": "https://github.com/diandiandidi519/my-cli/issues"
   },
   "dependencies": {
-    "@diandiandidi-cli/command": "file:../../models/command/",
-    "@diandiandidi-cli/log": "file:../../utils/log/",
-    "@diandiandidi-cli/package": "file:../../models/package/",
-    "@diandiandidi-cli/request": "file:../../utils/request/",
-    "@diandiandidi-cli/utils": "file:../../utils/utils/",
-    "fs-extra": "^10.0.0",
-    "inquirer": "^8.2.0",
-    "semver": "^7.3.5",
-    "user-home": "^3.0.0"
+    "axios": "^0.24.0"
   }
 }

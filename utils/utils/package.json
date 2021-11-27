@@ -26,5 +26,8 @@
   },
   "bugs": {
     "url": "https://github.com/diandiandidi519/my-cli/issues"
+  },
+  "dependencies": {
+    "cli-spinner": "^0.2.10"
   }
 }
