@@ -1,0 +1,45 @@
+{
+  "name": "@diandiandidi-cli/publish",
+  "version": "1.0.2",
+  "private": true,
+  "description": "publish",
+  "author": "diandiandidi519 <978267807@qq.com>",
+  "homepage": "https://github.com/diandiandidi519/my-cli#readme",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diandiandidi519/my-cli.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "build": "test"
+  },
+  "bugs": {
+    "url": "https://github.com/diandiandidi519/my-cli/issues"
+  },
+  "dependencies": {
+    "@diandiandidi-cli/command": "file:../../models/command/",
+    "@diandiandidi-cli/log": "file:../../utils/log/",
+    "@diandiandidi-cli/package": "file:../../models/package/",
+    "@diandiandidi-cli/request": "file:../../utils/request/",
+    "@diandiandidi-cli/utils": "file:../../utils/utils/",
+    "ejs": "^3.1.6",
+    "fs-extra": "^10.0.0",
+    "glob": "^7.2.0",
+    "inquirer": "^8.2.0",
+    "kebab-case": "^1.0.1",
+    "semver": "^7.3.5",
+    "user-home": "^3.0.0"
+  }
+}
