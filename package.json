@@ -20,5 +20,8 @@
     "lerna": "^4.0.0",
     "prettier": "^2.4.1",
     "standard-version": "^9.3.2"
+  },
+  "scripts": {
+    "prettier": "prettier -c --write \"./**/**/lib/*\""
   }
 }

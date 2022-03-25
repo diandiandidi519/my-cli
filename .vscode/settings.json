@@ -1,0 +1,16 @@
+{
+  "vetur.format.defaultFormatterOptions": {
+    "prettier": {
+      "semi": true, // 加分号
+      "singleQuote": true // 格式化以单引号为主
+    }
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

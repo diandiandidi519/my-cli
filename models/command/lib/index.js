@@ -1,21 +1,21 @@
-"use strict";
-const semver = require("semver");
-const colors = require("colors/safe");
-const log = require("@diandiandidi-cli/log");
-const { isObject } = require("@diandiandidi-cli/utils");
+'use strict';
+const semver = require('semver');
+const colors = require('colors/safe');
+const log = require('@diandiandidi-cli/log');
+const { isObject } = require('@diandiandidi-cli/utils');
 
-const LOWEST_NODE_VERSION = "v12.0.0";
+const LOWEST_NODE_VERSION = 'v12.0.0';
 
 class Command {
   constructor(argv) {
     if (!argv) {
-      throw new Error("Command类的参数不能为空");
+      throw new Error('Command类的参数不能为空');
     }
     if (!Array.isArray(argv)) {
-      throw new Error("Command类的参数必须为数组");
+      throw new Error('Command类的参数必须为数组');
     }
     if (argv.length < 1) {
-      throw new Error("Command类的参数不能为空");
+      throw new Error('Command类的参数不能为空');
     }
     this._argv = argv;
     let runner = new Promise((resolve, reject) => {
@@ -33,10 +33,10 @@ class Command {
     this._cmd = this._argv.pop();
   }
   init() {
-    throw new Error("init必须实现!");
+    throw new Error('init必须实现!');
   }
   exec() {
-    throw new Error("exec必须实现");
+    throw new Error('exec必须实现');
   }
   // 检查node版本号
   checkNodeVersion() {
